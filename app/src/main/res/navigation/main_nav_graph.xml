@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.cityconnect.view.fragments.HomeFragment"
+        android:label="Home" />
+
+    <fragment
+        android:id="@+id/feedFragment"
+        android:name="com.example.cityconnect.view.fragments.FeedFragment"
+        android:label="Feed" />
+
+    <fragment
+        android:id="@+id/directoryFragment"
+        android:name="com.example.cityconnect.view.fragments.DirectoryFragment"
+        android:label="Directory" />
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.cityconnect.view.fragments.ProfileFragment"
+        android:label="Profile" />
+
+</navigation>
+
