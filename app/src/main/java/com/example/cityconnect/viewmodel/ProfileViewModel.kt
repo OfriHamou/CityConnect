@@ -12,35 +12,39 @@ class ProfileViewModel(
     private val userRepository: UserRepository = UserRepository(),
 ) : ViewModel() {
 
-    private val _user = MutableLiveData<User?>()
-    val user: LiveData<User?> = _user
-
     private val _loading = MutableLiveData(false)
     val loading: LiveData<Boolean> = _loading
 
     private val _error = MutableLiveData<String?>(null)
     val error: LiveData<String?> = _error
 
+    private var currentUid: String? = null
+    private var _user: LiveData<User?> = MutableLiveData(null)
+    val user: LiveData<User?> = _user
+
     fun loadProfile() {
         val uid = authRepository.currentUid()
         if (uid.isNullOrBlank()) {
             _error.value = "Not logged in"
-            _user.value = null
+            _user = MutableLiveData(null)
+            currentUid = null
             return
         }
 
+        if (currentUid != uid) {
+            currentUid = uid
+            _user = userRepository.observeLocalUser(uid)
+        }
+
+        // Remote refresh -> UserRepository will cache into Room
         _loading.value = true
         _error.value = null
 
         userRepository.getUser(uid) { result ->
             _loading.postValue(false)
-            result.fold(
-                onSuccess = { user -> _user.postValue(user) },
-                onFailure = { e ->
-                    _error.postValue(e.message ?: "Failed to load profile")
-                    _user.postValue(null)
-                },
-            )
+            result.onFailure { e ->
+                _error.postValue(e.message ?: "Failed to refresh profile")
+            }
         }
     }
 }
