@@ -71,6 +71,7 @@ androidx-compose-material3 = { group = "androidx.compose.material3", name = "mat
 # firebase
 firebaseBom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebaseAuthKtx = { group = "com.google.firebase", name = "firebase-auth-ktx" }
+firebaseFirestoreKtx = { group = "com.google.firebase", name = "firebase-firestore-ktx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

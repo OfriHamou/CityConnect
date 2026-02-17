@@ -34,9 +34,10 @@ class RegisterFragment : Fragment() {
 
         binding.btnRegister.setOnClickListener {
             val email = binding.etEmail.text?.toString()?.trim().orEmpty()
+            val fullName = binding.etFullName.text?.toString()?.trim().orEmpty()
             val pass = binding.etPassword.text?.toString()?.trim().orEmpty()
 
-            authViewModel.register(email, pass)
+            authViewModel.register(email, pass, fullName)
         }
 
         binding.tvGoLogin.setOnClickListener {

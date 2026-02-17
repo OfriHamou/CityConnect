@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavOptions
@@ -11,6 +12,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.example.cityconnect.R
 import com.example.cityconnect.databinding.FragmentProfileBinding
 import com.example.cityconnect.viewmodel.AuthViewModel
+import com.example.cityconnect.viewmodel.ProfileViewModel
 
 class ProfileFragment : Fragment() {
 
@@ -18,6 +20,7 @@ class ProfileFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val authViewModel: AuthViewModel by viewModels()
+    private val profileViewModel: ProfileViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,6 +38,11 @@ class ProfileFragment : Fragment() {
             (requireActivity().supportFragmentManager.findFragmentById(R.id.rootNavHost) as NavHostFragment)
                 .navController
 
+        binding.btnEditProfile.setOnClickListener {
+            // Navigate to ROOT EditProfile destination from INNER tab
+            rootNavController.navigate(R.id.action_mainFragment_to_editProfileFragment)
+        }
+
         binding.btnLogout.setOnClickListener {
             authViewModel.logout()
 
@@ -44,6 +52,28 @@ class ProfileFragment : Fragment() {
 
             rootNavController.navigate(R.id.loginFragment, null, options)
         }
+
+        profileViewModel.loading.observe(viewLifecycleOwner) { isLoading ->
+            binding.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+        }
+
+        profileViewModel.user.observe(viewLifecycleOwner) { user ->
+            binding.tvFullName.text = user?.fullName ?: ""
+            binding.tvEmail.text = user?.email ?: ""
+        }
+
+        profileViewModel.error.observe(viewLifecycleOwner) { message ->
+            if (!message.isNullOrBlank()) {
+                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        profileViewModel.loadProfile()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        profileViewModel.loadProfile()
     }
 
     override fun onDestroyView() {

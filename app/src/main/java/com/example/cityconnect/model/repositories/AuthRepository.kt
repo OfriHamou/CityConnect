@@ -9,6 +9,10 @@ class AuthRepository(
 
     fun isLoggedIn(): Boolean = auth.currentUser != null
 
+    fun currentUid(): String? = auth.currentUser?.uid
+
+    fun currentEmail(): String? = auth.currentUser?.email
+
     fun login(email: String, pass: String, callback: (Result<Unit>) -> Unit) {
         auth.signInWithEmailAndPassword(email, pass)
             .addOnSuccessListener { callback(Result.success(Unit)) }
