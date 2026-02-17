@@ -1,5 +1,6 @@
 package com.example.cityconnect.model.repositories
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import com.example.cityconnect.base.MyApplication
@@ -9,6 +10,7 @@ import com.example.cityconnect.model.local.AppDatabase
 import com.example.cityconnect.model.mappers.toDomain
 import com.example.cityconnect.model.mappers.toEntity
 import com.example.cityconnect.model.remote.firestore.PostsRemote
+import com.example.cityconnect.model.remote.storage.ImagesRemote
 import com.example.cityconnect.model.schemas.Post
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,6 +21,7 @@ import java.util.UUID
 class PostRepository(
     private val authRepository: AuthRepository = AuthRepository(),
     private val remote: PostsRemote = PostsRemote(),
+    private val imagesRemote: ImagesRemote = ImagesRemote(),
     private val postDao: PostDao = AppDatabase.getInstance(MyApplication.appContext()).postDao(),
     private val userDao: UserDao = AppDatabase.getInstance(MyApplication.appContext()).userDao(),
 ) {
@@ -55,7 +58,7 @@ class PostRepository(
         }
     }
 
-    fun createPost(text: String, callback: (Result<Unit>) -> Unit) {
+    fun createPost(text: String, imageUri: Uri?, callback: (Result<Unit>) -> Unit) {
         val uid = authRepository.currentUid()
         if (uid.isNullOrBlank()) {
             callback(Result.failure(IllegalStateException("Not logged in")))
@@ -66,27 +69,47 @@ class PostRepository(
             val localUser = userDao.getUserOnce(uid)
 
             val now = System.currentTimeMillis()
-            val post = Post(
-                id = UUID.randomUUID().toString(),
-                ownerId = uid,
-                ownerName = localUser?.fullName ?: (authRepository.currentEmail() ?: ""),
-                ownerAvatarUrl = localUser?.avatarUrl ?: "",
-                text = text,
-                imageUrl = null,
-                createdAt = now,
-                updatedAt = now,
-            )
+            val postId = UUID.randomUUID().toString()
 
-            remote.createPost(post) { result ->
-                result.onSuccess {
-                    ioScope.launch { postDao.upsert(post.toEntity()) }
+            fun createWithImageUrl(imageUrl: String?) {
+                val post = Post(
+                    id = postId,
+                    ownerId = uid,
+                    ownerName = localUser?.fullName ?: (authRepository.currentEmail() ?: ""),
+                    ownerAvatarUrl = localUser?.avatarUrl ?: "",
+                    text = text,
+                    imageUrl = imageUrl,
+                    createdAt = now,
+                    updatedAt = now,
+                )
+
+                remote.createPost(post) { result ->
+                    result.onSuccess {
+                        ioScope.launch { postDao.upsert(post.toEntity()) }
+                    }
+                    callback(result)
                 }
-                callback(result)
+            }
+
+            if (imageUri != null) {
+                imagesRemote.uploadPostImage(postId, imageUri) { uploadResult ->
+                    uploadResult.fold(
+                        onSuccess = { url -> createWithImageUrl(url) },
+                        onFailure = { e -> callback(Result.failure(e)) },
+                    )
+                }
+            } else {
+                createWithImageUrl(null)
             }
         }
     }
 
-    fun updatePost(postId: String, newText: String, callback: (Result<Unit>) -> Unit) {
+    fun updatePost(
+        postId: String,
+        newText: String,
+        newImageUri: Uri?,
+        callback: (Result<Unit>) -> Unit,
+    ) {
         val uid = authRepository.currentUid()
         if (uid.isNullOrBlank()) {
             callback(Result.failure(IllegalStateException("Not logged in")))
@@ -105,19 +128,39 @@ class PostRepository(
                 return@launch
             }
 
-            val updated = localPost.toDomain().copy(
-                text = newText,
-                updatedAt = System.currentTimeMillis(),
-            )
+            fun updateWithImageUrl(imageUrl: String?) {
+                val updated = localPost.toDomain().copy(
+                    text = newText,
+                    imageUrl = imageUrl ?: localPost.imageUrl,
+                    updatedAt = System.currentTimeMillis(),
+                )
 
-            remote.updatePost(updated) { result ->
-                result.onSuccess {
-                    ioScope.launch { postDao.upsert(updated.toEntity()) }
+                remote.updatePost(updated) { result ->
+                    result.onSuccess {
+                        ioScope.launch { postDao.upsert(updated.toEntity()) }
+                    }
+                    callback(result)
                 }
-                callback(result)
+            }
+
+            if (newImageUri != null) {
+                imagesRemote.uploadPostImage(postId, newImageUri) { uploadResult ->
+                    uploadResult.fold(
+                        onSuccess = { url -> updateWithImageUrl(url) },
+                        onFailure = { e -> callback(Result.failure(e)) },
+                    )
+                }
+            } else {
+                updateWithImageUrl(null)
             }
         }
     }
+
+    // Keep old signatures for compatibility (delegate)
+    fun createPost(text: String, callback: (Result<Unit>) -> Unit) = createPost(text, null, callback)
+
+    fun updatePost(postId: String, newText: String, callback: (Result<Unit>) -> Unit) =
+        updatePost(postId, newText, null, callback)
 
     fun deletePost(postId: String, callback: (Result<Unit>) -> Unit) {
         val uid = authRepository.currentUid()

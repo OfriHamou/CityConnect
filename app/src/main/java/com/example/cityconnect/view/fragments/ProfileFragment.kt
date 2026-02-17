@@ -13,6 +13,7 @@ import com.example.cityconnect.R
 import com.example.cityconnect.databinding.FragmentProfileBinding
 import com.example.cityconnect.viewmodel.AuthViewModel
 import com.example.cityconnect.viewmodel.ProfileViewModel
+import com.squareup.picasso.Picasso
 
 class ProfileFragment : Fragment() {
 
@@ -60,6 +61,15 @@ class ProfileFragment : Fragment() {
         profileViewModel.user.observe(viewLifecycleOwner) { user ->
             binding.tvFullName.text = user?.fullName ?: ""
             binding.tvEmail.text = user?.email ?: ""
+
+            val avatarUrl = user?.avatarUrl
+            if (!avatarUrl.isNullOrBlank()) {
+                binding.ivAvatar.visibility = View.VISIBLE
+                Picasso.get().load(avatarUrl).fit().centerCrop().into(binding.ivAvatar)
+            } else {
+                binding.ivAvatar.visibility = View.GONE
+                binding.ivAvatar.setImageDrawable(null)
+            }
         }
 
         profileViewModel.error.observe(viewLifecycleOwner) { message ->
