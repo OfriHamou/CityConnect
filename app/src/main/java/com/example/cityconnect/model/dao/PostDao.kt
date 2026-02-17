@@ -13,10 +13,18 @@ interface PostDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertAll(posts: List<PostEntity>)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsert(post: PostEntity)
+
     @Query("SELECT * FROM posts ORDER BY createdAt DESC")
     fun observeAll(): LiveData<List<PostEntity>>
+
+    @Query("SELECT * FROM posts WHERE id = :id LIMIT 1")
+    fun observeById(id: String): LiveData<PostEntity?>
+
+    @Query("SELECT * FROM posts WHERE id = :id LIMIT 1")
+    suspend fun getByIdOnce(id: String): PostEntity?
 
     @Query("DELETE FROM posts WHERE id = :id")
     suspend fun deleteById(id: String)
 }
-

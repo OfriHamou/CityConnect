@@ -69,7 +69,13 @@
     <fragment
         android:id="@+id/postEditorFragment"
         android:name="com.example.cityconnect.view.fragments.PostEditorFragment"
-        android:label="Post Editor" />
+        android:label="Post Editor">
+
+        <argument
+            android:name="postId"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
 
     <fragment
         android:id="@+id/editProfileFragment"
