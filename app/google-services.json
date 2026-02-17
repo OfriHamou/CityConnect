@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "600655174521",
+    "project_id": "cityconnect-androidapp",
+    "storage_bucket": "cityconnect-androidapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:600655174521:android:e75642fb69ef7628adada8",
+        "android_client_info": {
+          "package_name": "com.example.cityconnect"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5tPwFGrqVFb1N9cQNrYv8L8DFDzAz7N8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
