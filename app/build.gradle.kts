@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.navigation.safe.args)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.kotlin.kapt)
 }
 
 android {
@@ -65,6 +67,10 @@ dependencies {
     // Lists
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.swiperefreshlayout)
+
+    // Firebase (Auth only for Step 2)
+    implementation(platform(libs.firebaseBom))
+    implementation(libs.firebaseAuthKtx)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

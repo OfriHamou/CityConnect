@@ -7,4 +7,5 @@ plugins {
     alias(libs.plugins.navigation.safe.args) apply false
     alias(libs.plugins.google.services) apply false
     alias(libs.plugins.kotlin.kapt) apply false
+    //alias(libs.plugins.gms.google.services) apply false
 }
