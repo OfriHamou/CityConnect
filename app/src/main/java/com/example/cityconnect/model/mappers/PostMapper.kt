@@ -1,9 +1,26 @@
 package com.example.cityconnect.model.mappers
 
+import com.example.cityconnect.model.schemas.Post
 import com.example.cityconnect.model.schemas.PostEntity
 
-// Placeholder mappers for Step 5 (no Post domain model yet).
-// When you add model/schemas/Post.kt, create matching mapping functions here.
+fun Post.toEntity(): PostEntity = PostEntity(
+    id = id,
+    ownerId = ownerId,
+    ownerName = ownerName,
+    ownerAvatarUrl = ownerAvatarUrl,
+    text = text,
+    imageUrl = imageUrl,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+)
 
-fun PostEntity.idOrEmpty(): String = id
-
+fun PostEntity.toDomain(): Post = Post(
+    id = id,
+    ownerId = ownerId,
+    ownerName = ownerName,
+    ownerAvatarUrl = ownerAvatarUrl,
+    text = text,
+    imageUrl = imageUrl,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+)
