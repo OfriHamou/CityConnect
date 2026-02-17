@@ -1,10 +1,12 @@
 package com.example.cityconnect.view.fragments
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -20,6 +22,19 @@ class PostEditorFragment : Fragment() {
     private val args: PostEditorFragmentArgs by navArgs()
     private val viewModel: FeedViewModel by viewModels()
 
+    private var selectedImageUri: Uri? = null
+
+    private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        selectedImageUri = uri
+        if (uri != null) {
+            binding.ivPreview.visibility = View.VISIBLE
+            binding.ivPreview.setImageURI(uri)
+        } else {
+            binding.ivPreview.visibility = View.GONE
+            binding.ivPreview.setImageDrawable(null)
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -33,6 +48,10 @@ class PostEditorFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val postId = args.postId
+
+        binding.btnPickImage.setOnClickListener {
+            pickImage.launch("image/*")
+        }
 
         if (!postId.isNullOrBlank()) {
             viewModel.observeLocalPost(postId).observe(viewLifecycleOwner) { post ->
@@ -57,13 +76,13 @@ class PostEditorFragment : Fragment() {
             val text = binding.etText.text?.toString()?.trim().orEmpty()
 
             if (!postId.isNullOrBlank()) {
-                viewModel.update(postId, text) { result ->
+                viewModel.update(postId, text, selectedImageUri) { result ->
                     if (result.isSuccess) {
                         findNavController().popBackStack()
                     }
                 }
             } else {
-                viewModel.create(text) { result ->
+                viewModel.create(text, selectedImageUri) { result ->
                     if (result.isSuccess) {
                         findNavController().popBackStack()
                     }

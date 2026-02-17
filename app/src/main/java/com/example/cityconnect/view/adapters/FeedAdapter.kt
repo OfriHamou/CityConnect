@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cityconnect.databinding.ItemPostBinding
 import com.example.cityconnect.model.schemas.Post
+import com.squareup.picasso.Picasso
 
 class FeedAdapter(
     private val currentUserId: String?,
@@ -31,6 +32,15 @@ class FeedAdapter(
         fun bind(post: Post) {
             binding.tvOwner.text = post.ownerName
             binding.tvText.text = post.text
+
+            val imageUrl = post.imageUrl
+            if (!imageUrl.isNullOrBlank()) {
+                binding.ivPostImage.visibility = View.VISIBLE
+                Picasso.get().load(imageUrl).fit().centerCrop().into(binding.ivPostImage)
+            } else {
+                binding.ivPostImage.visibility = View.GONE
+                binding.ivPostImage.setImageDrawable(null)
+            }
 
             val isOwner = !currentUserId.isNullOrBlank() && post.ownerId == currentUserId
             binding.btnEdit.visibility = if (isOwner) View.VISIBLE else View.GONE

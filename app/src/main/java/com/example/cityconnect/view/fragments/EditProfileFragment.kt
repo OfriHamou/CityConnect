@@ -1,10 +1,12 @@
 package com.example.cityconnect.view.fragments
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -18,6 +20,19 @@ class EditProfileFragment : Fragment() {
 
     private val viewModel: EditProfileViewModel by viewModels()
 
+    private var selectedAvatarUri: Uri? = null
+
+    private val pickAvatar = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        selectedAvatarUri = uri
+        if (uri != null) {
+            binding.ivAvatarPreview.visibility = View.VISIBLE
+            binding.ivAvatarPreview.setImageURI(uri)
+        } else {
+            binding.ivAvatarPreview.visibility = View.GONE
+            binding.ivAvatarPreview.setImageDrawable(null)
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -29,6 +44,10 @@ class EditProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.btnPickAvatar.setOnClickListener {
+            pickAvatar.launch("image/*")
+        }
 
         viewModel.loading.observe(viewLifecycleOwner) { isLoading ->
             binding.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
@@ -55,7 +74,7 @@ class EditProfileFragment : Fragment() {
 
         binding.btnSave.setOnClickListener {
             val fullName = binding.etFullName.text?.toString()?.trim().orEmpty()
-            viewModel.save(fullName)
+            viewModel.save(fullName, selectedAvatarUri)
         }
 
         viewModel.loadUser()

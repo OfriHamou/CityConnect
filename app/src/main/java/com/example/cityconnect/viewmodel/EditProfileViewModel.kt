@@ -1,5 +1,6 @@
 package com.example.cityconnect.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -47,7 +48,7 @@ class EditProfileViewModel(
         }
     }
 
-    fun save(fullName: String) {
+    fun save(fullName: String, avatarUri: Uri?) {
         val uid = authRepository.currentUid()
         if (uid.isNullOrBlank()) {
             _error.value = "Not logged in"
@@ -58,9 +59,7 @@ class EditProfileViewModel(
         _error.value = null
         _saveSuccess.value = false
 
-        val avatarUrl = _user.value?.avatarUrl ?: ""
-
-        userRepository.updateUser(uid, fullName, avatarUrl) { result ->
+        userRepository.updateUser(uid, fullName, avatarUri) { result ->
             _loading.postValue(false)
             result.fold(
                 onSuccess = { _saveSuccess.postValue(true) },
@@ -68,5 +67,7 @@ class EditProfileViewModel(
             )
         }
     }
-}
 
+    // keep old signature
+    fun save(fullName: String) = save(fullName, null)
+}

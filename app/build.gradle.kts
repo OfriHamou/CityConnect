@@ -72,6 +72,10 @@ dependencies {
     implementation(platform(libs.firebaseBom))
     implementation(libs.firebaseAuthKtx)
     implementation(libs.firebaseFirestoreKtx)
+    implementation(libs.firebaseStorageKtx)
+
+    // Image loading
+    implementation(libs.picasso)
 
     // Room (local cache)
     implementation(libs.androidx.room.runtime)

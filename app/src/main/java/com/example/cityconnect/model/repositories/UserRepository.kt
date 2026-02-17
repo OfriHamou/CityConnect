@@ -1,5 +1,6 @@
 package com.example.cityconnect.model.repositories
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import com.example.cityconnect.base.MyApplication
@@ -8,6 +9,7 @@ import com.example.cityconnect.model.local.AppDatabase
 import com.example.cityconnect.model.mappers.toDomain
 import com.example.cityconnect.model.mappers.toEntity
 import com.example.cityconnect.model.remote.firestore.UsersRemote
+import com.example.cityconnect.model.remote.storage.ImagesRemote
 import com.example.cityconnect.model.schemas.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,6 +18,7 @@ import kotlinx.coroutines.launch
 
 class UserRepository(
     private val remote: UsersRemote = UsersRemote(),
+    private val imagesRemote: ImagesRemote = ImagesRemote(),
     private val userDao: UserDao = AppDatabase.getInstance(MyApplication.appContext()).userDao(),
 ) {
 
@@ -71,14 +74,36 @@ class UserRepository(
     fun updateUser(
         uid: String,
         fullName: String,
-        avatarUrl: String,
+        avatarUri: Uri?,
         callback: (Result<Unit>) -> Unit,
     ) {
-        remote.updateUser(uid, fullName, avatarUrl) { result ->
-            result.onSuccess {
-                // refresh remote snapshot to ensure local is consistent
-                getUser(uid) { /* ignore */ }
+        if (avatarUri != null) {
+            imagesRemote.uploadAvatar(uid, avatarUri) { uploadResult ->
+                uploadResult.fold(
+                    onSuccess = { url ->
+                        remote.updateUser(uid, fullName, url) { updateResult ->
+                            updateResult.onSuccess { getUser(uid) { /* ignore */ } }
+                            callback(updateResult)
+                        }
+                    },
+                    onFailure = { e -> callback(Result.failure(e)) },
+                )
             }
+        } else {
+            ioScope.launch {
+                val existingAvatarUrl = userDao.getUserOnce(uid)?.avatarUrl.orEmpty()
+                remote.updateUser(uid, fullName, existingAvatarUrl) { result ->
+                    result.onSuccess { getUser(uid) { /* ignore */ } }
+                    callback(result)
+                }
+            }
+        }
+    }
+
+    // keep old signature for compatibility
+    fun updateUser(uid: String, fullName: String, avatarUrl: String, callback: (Result<Unit>) -> Unit) {
+        remote.updateUser(uid, fullName, avatarUrl) { result ->
+            result.onSuccess { getUser(uid) { /* ignore */ } }
             callback(result)
         }
     }
