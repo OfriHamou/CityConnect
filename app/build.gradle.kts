@@ -68,9 +68,10 @@ dependencies {
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.swiperefreshlayout)
 
-    // Firebase (Auth only for Step 2)
+    // Firebase
     implementation(platform(libs.firebaseBom))
     implementation(libs.firebaseAuthKtx)
+    implementation(libs.firebaseFirestoreKtx)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
