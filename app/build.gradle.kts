@@ -43,6 +43,17 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
+    }
+}
+
+// Add after android{} block (top-level):
+val geoapifyApiKey: String = (project.findProperty("GEOAPIFY_API_KEY") as String?) ?: ""
+
+android {
+    defaultConfig {
+        // ...existing code...
+        buildConfigField("String", "GEOAPIFY_API_KEY", "\"$geoapifyApiKey\"")
     }
 }
 
@@ -81,6 +92,12 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     kapt(libs.androidx.room.compiler)
+
+    // Retrofit (Geoapify)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
