@@ -1,11 +1,13 @@
 package com.example.cityconnect.view.adapters
 
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.cityconnect.R
 import com.example.cityconnect.databinding.ItemPlaceBinding
 import com.example.cityconnect.model.schemas.Place
 import com.squareup.picasso.Picasso
@@ -33,14 +35,40 @@ class DirectoryAdapter : ListAdapter<Place, DirectoryAdapter.PlaceVH>(Diff) {
                 binding.tvPhone.visibility = View.GONE
             }
 
-            val url = place.imageUrl
-            if (!url.isNullOrBlank()) {
-                binding.ivPlace.visibility = View.VISIBLE
-                Picasso.get().load(url).fit().centerCrop().into(binding.ivPlace)
-            } else {
-                binding.ivPlace.visibility = View.GONE
-                binding.ivPlace.setImageDrawable(null)
+            val categoryRes = when (place.category) {
+                "Restaurants" -> R.drawable.restaurant
+                "Businesses" -> R.drawable.business
+                "Services" -> R.drawable.services
+                else -> R.drawable.restaurant
             }
+
+            // Requested: system icon while loading
+            val loadingRes = android.R.drawable.ic_menu_gallery
+
+            val targetHeightPx = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                170f,
+                binding.root.resources.displayMetrics
+            ).toInt()
+            val targetWidthPx = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                360f,
+                binding.root.resources.displayMetrics
+            ).toInt()
+
+            val request = if (!place.imageUrl.isNullOrBlank()) {
+                Picasso.get().load(place.imageUrl)
+            } else {
+                // Show category images (restaurants/business/services) but decoded safely.
+                Picasso.get().load(categoryRes)
+            }
+
+            request
+                .placeholder(loadingRes)
+                .error(categoryRes)
+                .resize(targetWidthPx, targetHeightPx)
+                .centerCrop()
+                .into(binding.ivPlace)
         }
     }
 
