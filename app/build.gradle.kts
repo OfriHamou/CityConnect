@@ -6,6 +6,11 @@ plugins {
     alias(libs.plugins.kotlin.kapt)
 }
 
+
+val geoapifyApiKey = project.findProperty("GEOAPIFY_API_KEY")?.toString()
+    ?: error("Missing GEOAPIFY_API_KEY in local.properties")
+
+
 android {
     namespace = "com.example.cityconnect"
     compileSdk {
@@ -20,6 +25,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "GEOAPIFY_API_KEY", "\"$geoapifyApiKey\"")
+
     }
 
     buildTypes {
@@ -45,17 +53,9 @@ android {
         viewBinding = true
         buildConfig = true
     }
+
 }
 
-// Add after android{} block (top-level):
-val geoapifyApiKey: String = (project.findProperty("GEOAPIFY_API_KEY") as String?) ?: ""
-
-android {
-    defaultConfig {
-        // ...existing code...
-        buildConfigField("String", "GEOAPIFY_API_KEY", "\"$geoapifyApiKey\"")
-    }
-}
 
 dependencies {
     implementation(libs.androidx.core.ktx)
