@@ -2,11 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/homeFragment"
-        android:icon="@android:drawable/ic_menu_view"
-        android:title="Home" />
-
-    <item
         android:id="@+id/feedFragment"
         android:icon="@android:drawable/ic_menu_agenda"
         android:title="Feed" />
@@ -22,4 +17,3 @@
         android:title="Profile" />
 
 </menu>
-
