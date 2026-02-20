@@ -1,6 +1,7 @@
 package com.example.cityconnect.viewmodel
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.cityconnect.model.repositories.AuthRepository
@@ -18,22 +19,32 @@ class ProfileViewModel(
     private val _error = MutableLiveData<String?>(null)
     val error: LiveData<String?> = _error
 
+    private val userMediator = MediatorLiveData<User?>()
+    val user: LiveData<User?> = userMediator
+
     private var currentUid: String? = null
-    private var _user: LiveData<User?> = MutableLiveData(null)
-    val user: LiveData<User?> = _user
+    private var currentSource: LiveData<User?>? = null
 
     fun loadProfile() {
         val uid = authRepository.currentUid()
         if (uid.isNullOrBlank()) {
             _error.value = "Not logged in"
-            _user = MutableLiveData(null)
             currentUid = null
+            currentSource?.let { userMediator.removeSource(it) }
+            currentSource = null
+            userMediator.value = null
             return
         }
 
         if (currentUid != uid) {
             currentUid = uid
-            _user = userRepository.observeLocalUser(uid)
+
+            currentSource?.let { userMediator.removeSource(it) }
+            val newSource = userRepository.observeLocalUser(uid)
+            currentSource = newSource
+            userMediator.addSource(newSource) { u ->
+                userMediator.value = u
+            }
         }
 
         // Remote refresh -> UserRepository will cache into Room

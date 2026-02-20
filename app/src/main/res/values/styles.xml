@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Circle clipping for avatars -->
+    <style name="ShapeAppearanceOverlay.CityConnect.Circle" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <!-- Rounded corners (16dp) for image previews/cards -->
+    <style name="ShapeAppearanceOverlay.CityConnect.Rounded16" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+</resources>
