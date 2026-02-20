@@ -6,11 +6,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.cityconnect.model.repositories.AuthRepository
 import com.example.cityconnect.model.repositories.UserRepository
+import com.example.cityconnect.model.repositories.PostRepository
 import com.example.cityconnect.model.schemas.User
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class ProfileViewModel(
     private val authRepository: AuthRepository = AuthRepository(),
     private val userRepository: UserRepository = UserRepository(),
+    private val postRepository: PostRepository = PostRepository(),
 ) : ViewModel() {
 
     private val _loading = MutableLiveData(false)
@@ -22,8 +27,17 @@ class ProfileViewModel(
     private val userMediator = MediatorLiveData<User?>()
     val user: LiveData<User?> = userMediator
 
+    // New: total posts for this user (from local cache)
+    private val postsCountMediator = MediatorLiveData<Int>()
+    val totalPosts: LiveData<Int> = postsCountMediator
+
+    // New: simple formatted date
+    private val memberSinceMediator = MediatorLiveData<String>()
+    val memberSince: LiveData<String> = memberSinceMediator
+
     private var currentUid: String? = null
     private var currentSource: LiveData<User?>? = null
+    private var currentPostsCountSource: LiveData<Int>? = null
 
     fun loadProfile() {
         val uid = authRepository.currentUid()
@@ -31,8 +45,12 @@ class ProfileViewModel(
             _error.value = "Not logged in"
             currentUid = null
             currentSource?.let { userMediator.removeSource(it) }
+            currentPostsCountSource?.let { postsCountMediator.removeSource(it) }
             currentSource = null
+            currentPostsCountSource = null
             userMediator.value = null
+            postsCountMediator.value = 0
+            memberSinceMediator.value = ""
             return
         }
 
@@ -44,10 +62,18 @@ class ProfileViewModel(
             currentSource = newSource
             userMediator.addSource(newSource) { u ->
                 userMediator.value = u
+                memberSinceMediator.value = formatDate(u?.createdAt ?: 0L)
+            }
+
+            currentPostsCountSource?.let { postsCountMediator.removeSource(it) }
+            val postsCountSource = postRepository.observeMyPostsCount(uid)
+            currentPostsCountSource = postsCountSource
+            postsCountMediator.addSource(postsCountSource) { count ->
+                postsCountMediator.value = count
             }
         }
 
-        // Remote refresh -> UserRepository will cache into Room
+        // Remote refresh -> repositories will cache into Room
         _loading.value = true
         _error.value = null
 
@@ -57,5 +83,13 @@ class ProfileViewModel(
                 _error.postValue(e.message ?: "Failed to refresh profile")
             }
         }
+
+        // This ensures post count can become accurate after a refresh.
+        postRepository.refreshPosts { /* ignore */ }
+    }
+
+    private fun formatDate(epochMillis: Long): String {
+        if (epochMillis <= 0L) return ""
+        return SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(epochMillis))
     }
 }

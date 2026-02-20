@@ -189,4 +189,12 @@ class PostRepository(
             }
         }
     }
+
+    fun observeMyPostsCount(ownerId: String): LiveData<Int> {
+        val out = MediatorLiveData<Int>()
+        out.addSource(postDao.observeCountByOwner(ownerId)) { count ->
+            out.value = count
+        }
+        return out
+    }
 }

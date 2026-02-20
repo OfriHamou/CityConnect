@@ -26,4 +26,7 @@ interface PostDao {
 
     @Query("DELETE FROM posts WHERE id = :id")
     suspend fun deleteById(id: String)
+
+    @Query("SELECT COUNT(*) FROM posts WHERE ownerId = :ownerId")
+    fun observeCountByOwner(ownerId: String): LiveData<Int>
 }

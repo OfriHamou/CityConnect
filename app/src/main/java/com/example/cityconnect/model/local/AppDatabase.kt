@@ -13,7 +13,7 @@ import com.example.cityconnect.model.schemas.PlaceEntity
 
 @Database(
     entities = [UserEntity::class, PostEntity::class, PlaceEntity::class],
-    version = 2,
+    version = 3,
     exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {

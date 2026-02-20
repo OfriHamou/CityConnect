@@ -47,6 +47,7 @@ class UserRepository(
     ) {
         remote.createUser(uid, email, fullName, avatarUrl) { result ->
             result.onSuccess {
+                val now = System.currentTimeMillis()
                 // cache locally too
                 saveUserToLocal(
                     User(
@@ -54,7 +55,8 @@ class UserRepository(
                         email = email,
                         fullName = fullName,
                         avatarUrl = avatarUrl,
-                        updatedAt = System.currentTimeMillis(),
+                        createdAt = now,
+                        updatedAt = now,
                     ),
                 )
             }
