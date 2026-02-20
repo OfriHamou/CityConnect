@@ -1,6 +1,7 @@
 package com.example.cityconnect.view.fragments
 //test for amit
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ import com.example.cityconnect.R
 import com.example.cityconnect.databinding.FragmentProfileBinding
 import com.example.cityconnect.viewmodel.AuthViewModel
 import com.example.cityconnect.viewmodel.ProfileViewModel
+import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 
 class ProfileFragment : Fragment() {
@@ -62,13 +64,28 @@ class ProfileFragment : Fragment() {
             binding.tvFullName.text = user?.fullName ?: ""
             binding.tvEmail.text = user?.email ?: ""
 
+            // Always keep avatar visible (mockup style)
+            binding.ivAvatar.visibility = View.VISIBLE
+
             val avatarUrl = user?.avatarUrl
             if (!avatarUrl.isNullOrBlank()) {
-                binding.ivAvatar.visibility = View.VISIBLE
-                Picasso.get().load(avatarUrl).fit().centerCrop().into(binding.ivAvatar)
+                Picasso.get()
+                    .load(avatarUrl)
+                    .placeholder(R.drawable.ic_launcher_foreground)
+                    .error(R.drawable.ic_launcher_foreground)
+                    .resize(240, 240)
+                    .centerCrop()
+                    .into(binding.ivAvatar, object : Callback {
+                        override fun onSuccess() {
+                            // no-op
+                        }
+
+                        override fun onError(e: Exception?) {
+                            Log.e("ProfileFragment", "Failed to load avatarUrl=$avatarUrl", e)
+                        }
+                    })
             } else {
-                binding.ivAvatar.visibility = View.GONE
-                binding.ivAvatar.setImageDrawable(null)
+                binding.ivAvatar.setImageResource(R.drawable.ic_launcher_foreground)
             }
         }
 

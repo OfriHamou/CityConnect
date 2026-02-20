@@ -28,14 +28,20 @@ class ImagesRemote(
 
     fun uploadAvatar(userId: String, uri: Uri, callback: (Result<String>) -> Unit) {
         val ref = storage.reference.child("avatars/$userId.jpg")
+
+        Log.d("ImagesRemote", "uploadAvatar userId=$userId uri=$uri path=${ref.path}")
+
         ref.putFile(uri)
             .continueWithTask { task ->
                 if (!task.isSuccessful) {
-                    throw task.exception ?: RuntimeException("Upload failed")
+                    val ex = task.exception
+                    Log.e("ImagesRemote", "uploadAvatar putFile failed", ex)
+                    throw ex ?: RuntimeException("Upload failed")
                 }
                 ref.downloadUrl
             }
             .addOnSuccessListener { downloadUri ->
+                Log.d("ImagesRemote", "uploadAvatar success url=$downloadUri")
                 callback(Result.success(downloadUri.toString()))
             }
             .addOnFailureListener { e ->
@@ -44,4 +50,3 @@ class ImagesRemote(
             }
     }
 }
-
