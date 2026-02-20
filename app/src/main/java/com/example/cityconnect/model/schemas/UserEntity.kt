@@ -10,6 +10,6 @@ data class UserEntity(
     val email: String,
     val fullName: String,
     val avatarUrl: String,
+    val createdAt: Long,
     val updatedAt: Long,
 )
-

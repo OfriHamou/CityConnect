@@ -89,6 +89,20 @@ class ProfileFragment : Fragment() {
             }
         }
 
+        profileViewModel.totalPosts.observe(viewLifecycleOwner) { count ->
+            // Legacy hidden header stats
+            binding.tvStatsPosts.text = "Posts: $count"
+            // New Account Details card
+            binding.tvPostsCreatedValue.text = count.toString()
+        }
+
+        profileViewModel.memberSince.observe(viewLifecycleOwner) { date ->
+            // Legacy hidden header stats
+            binding.tvStatsMemberSince.text = if (date.isBlank()) "" else "Member since: $date"
+            // New Account Details card
+            binding.tvMemberSinceValue.text = date
+        }
+
         profileViewModel.error.observe(viewLifecycleOwner) { message ->
             if (!message.isNullOrBlank()) {
                 Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()

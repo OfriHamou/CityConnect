@@ -17,12 +17,14 @@ class UsersRemote(
         avatarUrl: String = "",
         callback: (Result<Unit>) -> Unit,
     ) {
+        val now = System.currentTimeMillis()
         val user = User(
             uid = uid,
             email = email,
             fullName = fullName,
             avatarUrl = avatarUrl,
-            updatedAt = System.currentTimeMillis(),
+            createdAt = now,
+            updatedAt = now,
         )
 
         usersCollection.document(uid)
@@ -60,6 +62,7 @@ class UsersRemote(
         val updates = mapOf(
             "fullName" to fullName,
             "avatarUrl" to avatarUrl,
+            // do NOT update createdAt
             "updatedAt" to System.currentTimeMillis(),
         )
 
@@ -72,4 +75,3 @@ class UsersRemote(
             }
     }
 }
-

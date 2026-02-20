@@ -8,6 +8,7 @@ fun User.toEntity(): UserEntity = UserEntity(
     email = email,
     fullName = fullName,
     avatarUrl = avatarUrl,
+    createdAt = createdAt,
     updatedAt = updatedAt,
 )
 
@@ -16,6 +17,7 @@ fun UserEntity.toDomain(): User = User(
     email = email,
     fullName = fullName,
     avatarUrl = avatarUrl,
+    createdAt = createdAt,
     updatedAt = updatedAt,
 )
 
