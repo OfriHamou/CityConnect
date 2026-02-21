@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.cityconnect.R
 import com.example.cityconnect.databinding.FragmentMyPostsBinding
@@ -36,6 +37,12 @@ class MyPostsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Minimal: allow returning to all posts
+        binding.toolbar.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material)
+        binding.toolbar.setNavigationOnClickListener {
+            findNavController().popBackStack()
+        }
+
         val rootNavController =
             (requireActivity().supportFragmentManager.findFragmentById(R.id.rootNavHost) as NavHostFragment)
                 .navController
@@ -44,7 +51,7 @@ class MyPostsFragment : Fragment() {
             currentUserId = viewModel.currentUserId,
             onEdit = { post ->
                 rootNavController.navigate(
-                    R.id.action_global_postEditorFragment,
+                    R.id.action_myPostsFragment_to_postEditorFragment,
                     Bundle().apply { putString("postId", post.id) }
                 )
             },

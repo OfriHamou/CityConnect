@@ -1,5 +1,7 @@
 package com.example.cityconnect.view.fragments
 
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +22,20 @@ class DirectoryFragment : Fragment() {
     private val viewModel: DirectoryViewModel by viewModels()
     private var adapter: DirectoryAdapter? = null
 
+    private fun updateChipColors(selected: View) {
+        val selectedBg = Color.parseColor("#1E63FF")
+        val selectedText = Color.WHITE
+        val normalBg = Color.parseColor("#E9F0FF")
+        val normalText = Color.parseColor("#1E63FF")
+
+        val chips = listOf(binding.btnRestaurants, binding.btnBusinesses, binding.btnServices)
+        chips.forEach { chip ->
+            val isSelected = chip === selected
+            chip.chipBackgroundColor = ColorStateList.valueOf(if (isSelected) selectedBg else normalBg)
+            chip.setTextColor(if (isSelected) selectedText else normalText)
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -36,15 +52,21 @@ class DirectoryFragment : Fragment() {
         binding.rvPlaces.layoutManager = LinearLayoutManager(requireContext())
         binding.rvPlaces.adapter = adapter
 
+        // Initial selected state
+        updateChipColors(binding.btnRestaurants)
+
         binding.btnRestaurants.setOnClickListener {
+            updateChipColors(it)
             viewModel.setCategory("Restaurants")
             viewModel.refresh()
         }
         binding.btnBusinesses.setOnClickListener {
+            updateChipColors(it)
             viewModel.setCategory("Businesses")
             viewModel.refresh()
         }
         binding.btnServices.setOnClickListener {
+            updateChipColors(it)
             viewModel.setCategory("Services")
             viewModel.refresh()
         }

@@ -197,4 +197,20 @@ class PostRepository(
         }
         return out
     }
+
+    fun updateOwnerInfoForAllPosts(
+        ownerId: String,
+        ownerName: String,
+        ownerAvatarUrl: String,
+        callback: (Result<Unit>) -> Unit,
+    ) {
+        remote.updateOwnerInfoForAllPosts(ownerId, ownerName, ownerAvatarUrl) { result ->
+            result.onSuccess {
+                ioScope.launch {
+                    postDao.updateOwnerInfo(ownerId, ownerName, ownerAvatarUrl)
+                }
+            }
+            callback(result)
+        }
+    }
 }

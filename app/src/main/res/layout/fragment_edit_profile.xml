@@ -95,7 +95,7 @@
                 android:layout_marginTop="12dp"
                 android:text="Pick Avatar"
                 android:textAllCaps="false"
-                app:backgroundTint="#E9F0FF"
+                app:backgroundTint="#2A5CC7"
                 app:cornerRadius="10dp" />
 
             <com.google.android.material.button.MaterialButton

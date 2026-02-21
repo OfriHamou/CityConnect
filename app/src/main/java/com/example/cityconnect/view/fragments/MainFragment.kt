@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.setupWithNavController
 import com.example.cityconnect.databinding.FragmentMainBinding
 
 class MainFragment : Fragment() {
@@ -30,7 +29,19 @@ class MainFragment : Fragment() {
             .findFragmentById(binding.mainNavHost.id) as NavHostFragment
         val navController = navHostFragment.navController
 
-        binding.bottomNavigation.setupWithNavController(navController)
+        // Minimal + robust: handle selection ourselves
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
+            val currentId = navController.currentDestination?.id
+            if (currentId != item.itemId) {
+                navController.navigate(item.itemId)
+            }
+            true
+        }
+
+        // Keep bottom nav checked item in sync
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            binding.bottomNavigation.menu.findItem(destination.id)?.isChecked = true
+        }
     }
 
     override fun onDestroyView() {
@@ -38,4 +49,3 @@ class MainFragment : Fragment() {
         _binding = null
     }
 }
-
