@@ -7,8 +7,7 @@ plugins {
 }
 
 
-val geoapifyApiKey = project.findProperty("GEOAPIFY_API_KEY")?.toString()
-    ?: error("Missing GEOAPIFY_API_KEY in local.properties")
+val geoapifyApiKey = (project.findProperty("GEOAPIFY_API_KEY") as String?) ?: ""
 
 
 android {
