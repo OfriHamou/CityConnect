@@ -10,13 +10,13 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.cityconnect.R
-import com.example.cityconnect.databinding.FragmentFeedBinding
+import com.example.cityconnect.databinding.FragmentMyPostsBinding
 import com.example.cityconnect.view.adapters.FeedAdapter
 import com.example.cityconnect.viewmodel.FeedViewModel
 
-class FeedFragment : Fragment() {
+class MyPostsFragment : Fragment() {
 
-    private var _binding: FragmentFeedBinding? = null
+    private var _binding: FragmentMyPostsBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: FeedViewModel by viewModels()
@@ -25,10 +25,10 @@ class FeedFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
-        _binding = FragmentFeedBinding.inflate(inflater, container, false)
-        return binding.root
+        _binding = FragmentMyPostsBinding.inflate(inflater, container, false)
+        return binding.root as View
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -45,27 +45,18 @@ class FeedFragment : Fragment() {
                 rootNavController.navigate(action)
             },
             onDelete = { post ->
-                viewModel.delete(post.id) { /* state handled via error LiveData */ }
+                viewModel.delete(post.id) { /* errors via LiveData */ }
             },
         )
 
-        binding.rvFeed.layoutManager = LinearLayoutManager(requireContext())
-        binding.rvFeed.adapter = adapter
+        binding.rvMyPosts.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvMyPosts.adapter = adapter
 
-        binding.btnNewPost.setOnClickListener {
-            val action = MainFragmentDirections.actionMainFragmentToPostEditorFragment(null)
-            rootNavController.navigate(action)
-        }
-
-        // Navigate to separate My Posts screen (instead of filtering inside Feed)
-        binding.chipMyPosts.setOnClickListener {
-            rootNavController.navigate(R.id.action_mainFragment_to_myPostsFragment)
-        }
+        // Always show only my posts on this screen
+        viewModel.setShowOnlyMine(true)
 
         viewModel.posts.observe(viewLifecycleOwner) { posts ->
-            adapter?.submitList(posts) {
-                binding.rvFeed.scrollToPosition(0)
-            }
+            adapter?.submitList(posts)
         }
 
         viewModel.error.observe(viewLifecycleOwner) { msg ->
@@ -79,7 +70,7 @@ class FeedFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding.rvFeed.adapter = null
+        binding.rvMyPosts.adapter = null
         adapter = null
         _binding = null
     }

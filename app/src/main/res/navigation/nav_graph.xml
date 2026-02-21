@@ -64,6 +64,10 @@
         <action
             android:id="@+id/action_mainFragment_to_editProfileFragment"
             app:destination="@id/editProfileFragment" />
+
+        <action
+            android:id="@+id/action_mainFragment_to_myPostsFragment"
+            app:destination="@id/myPostsFragment" />
     </fragment>
 
     <fragment
@@ -81,5 +85,10 @@
         android:id="@+id/editProfileFragment"
         android:name="com.example.cityconnect.view.fragments.EditProfileFragment"
         android:label="Edit Profile" />
+
+    <fragment
+        android:id="@+id/myPostsFragment"
+        android:name="com.example.cityconnect.view.fragments.MyPostsFragment"
+        android:label="My Posts" />
 
 </navigation>
