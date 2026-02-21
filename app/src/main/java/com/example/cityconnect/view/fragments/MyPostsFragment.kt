@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.NavHostFragment
@@ -41,11 +43,25 @@ class MyPostsFragment : Fragment() {
         adapter = FeedAdapter(
             currentUserId = viewModel.currentUserId,
             onEdit = { post ->
-                val action = MainFragmentDirections.actionMainFragmentToPostEditorFragment(post.id)
-                rootNavController.navigate(action)
+                rootNavController.navigate(
+                    R.id.action_global_postEditorFragment,
+                    Bundle().apply { putString("postId", post.id) }
+                )
             },
             onDelete = { post ->
-                viewModel.delete(post.id) { /* errors via LiveData */ }
+                val dialog = AlertDialog.Builder(requireContext())
+                    .setTitle("Delete post?")
+                    .setMessage("This can't be undone.")
+                    .setNegativeButton("Cancel", null)
+                    .setPositiveButton("Delete") { _, _ ->
+                        viewModel.delete(post.id) { /* errors via LiveData */ }
+                    }
+                    .show()
+
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+                    ?.setTextColor(ContextCompat.getColor(requireContext(), R.color.dialog_cancel))
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                    ?.setTextColor(ContextCompat.getColor(requireContext(), R.color.dialog_delete))
             },
         )
 

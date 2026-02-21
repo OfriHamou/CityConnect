@@ -14,23 +14,20 @@ class FeedViewModel(
     private val authRepository: AuthRepository = AuthRepository(),
 ) : ViewModel() {
 
-    // Cache uid once for this VM instance (minimal, avoids repeated auth calls / null timing)
-    private val uid: String? = authRepository.currentUid()
-
-    val currentUserId: String? get() = uid
-
     private val allPosts: LiveData<List<Post>> = postRepository.observePosts()
 
     private val _showOnlyMine = MutableLiveData(false)
     val showOnlyMine: LiveData<Boolean> = _showOnlyMine
+
+    val currentUserId: String? get() = authRepository.currentUid()
 
     // Posts shown in UI (optionally filtered)
     val posts: LiveData<List<Post>> = MediatorLiveData<List<Post>>().apply {
         fun recompute(all: List<Post>?, onlyMine: Boolean?) {
             val list = all ?: emptyList()
             val mine = onlyMine == true
-            val me = uid
-            value = if (mine && !me.isNullOrBlank()) list.filter { it.ownerId == me } else list
+            val uid = currentUserId
+            value = if (mine && !uid.isNullOrBlank()) list.filter { it.ownerId == uid } else list
         }
 
         addSource(allPosts) { list ->

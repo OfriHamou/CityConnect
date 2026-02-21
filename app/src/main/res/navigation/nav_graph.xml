@@ -4,6 +4,10 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/splashFragment">
 
+    <action
+        android:id="@+id/action_global_postEditorFragment"
+        app:destination="@id/postEditorFragment" />
+
     <fragment
         android:id="@+id/splashFragment"
         android:name="com.example.cityconnect.view.fragments.SplashFragment"
