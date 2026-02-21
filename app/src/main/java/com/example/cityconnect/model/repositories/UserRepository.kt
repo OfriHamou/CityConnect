@@ -49,7 +49,6 @@ class UserRepository(
         remote.createUser(uid, email, fullName, avatarUrl) { result ->
             result.onSuccess {
                 val now = System.currentTimeMillis()
-                // cache locally too
                 saveUserToLocal(
                     User(
                         uid = uid,
@@ -86,9 +85,7 @@ class UserRepository(
                     onSuccess = { url ->
                         remote.updateUser(uid, fullName, url) { updateResult ->
                             updateResult.onSuccess {
-                                // Refresh local user cache
                                 getUser(uid) { /* ignore */ }
-                                // Fan-out user changes into existing posts
                                 postRepository.updateOwnerInfoForAllPosts(uid, fullName, url) { /* ignore */ }
                             }
                             callback(updateResult)
@@ -110,8 +107,6 @@ class UserRepository(
             }
         }
     }
-
-    // keep old signature for compatibility
     fun updateUser(uid: String, fullName: String, avatarUrl: String, callback: (Result<Unit>) -> Unit) {
         remote.updateUser(uid, fullName, avatarUrl) { result ->
             result.onSuccess { getUser(uid) { /* ignore */ } }

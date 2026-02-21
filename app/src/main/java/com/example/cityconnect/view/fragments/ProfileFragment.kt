@@ -1,5 +1,5 @@
 package com.example.cityconnect.view.fragments
-//test for amit
+
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -43,7 +43,6 @@ class ProfileFragment : Fragment() {
                 .navController
 
         binding.btnEditProfile.setOnClickListener {
-            // Navigate to ROOT EditProfile destination from INNER tab
             rootNavController.navigate(R.id.action_mainFragment_to_editProfileFragment)
         }
 
@@ -56,8 +55,6 @@ class ProfileFragment : Fragment() {
 
             rootNavController.navigate(R.id.loginFragment, null, options)
         }
-
-        // Minimal: tap posts-count to open My Posts
         binding.tvPostsCreatedValue.setOnClickListener {
             rootNavController.navigate(R.id.action_global_myPostsFragment)
         }
@@ -69,8 +66,6 @@ class ProfileFragment : Fragment() {
         profileViewModel.user.observe(viewLifecycleOwner) { user ->
             binding.tvFullName.text = user?.fullName ?: ""
             binding.tvEmail.text = user?.email ?: ""
-
-            // Always keep avatar visible (mockup style)
             binding.ivAvatar.visibility = View.VISIBLE
 
             val avatarUrl = user?.avatarUrl
@@ -83,7 +78,6 @@ class ProfileFragment : Fragment() {
                     .centerCrop()
                     .into(binding.ivAvatar, object : Callback {
                         override fun onSuccess() {
-                            // no-op
                         }
 
                         override fun onError(e: Exception?) {
@@ -96,16 +90,12 @@ class ProfileFragment : Fragment() {
         }
 
         profileViewModel.totalPosts.observe(viewLifecycleOwner) { count ->
-            // Legacy hidden header stats
             binding.tvStatsPosts.text = "Posts: $count"
-            // New Account Details card
             binding.tvPostsCreatedValue.text = count.toString()
         }
 
         profileViewModel.memberSince.observe(viewLifecycleOwner) { date ->
-            // Legacy hidden header stats
             binding.tvStatsMemberSince.text = if (date.isBlank()) "" else "Member since: $date"
-            // New Account Details card
             binding.tvMemberSinceValue.text = date
         }
 

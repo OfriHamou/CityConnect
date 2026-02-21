@@ -85,6 +85,9 @@ dependencies {
     implementation(libs.firebaseFirestoreKtx)
     implementation(libs.firebaseStorageKtx)
 
+    // Play services (needed for some Firebase/Auth flows and common GMS integrations)
+    implementation(libs.play.services.auth)
+
     // Image loading
     implementation(libs.picasso)
 

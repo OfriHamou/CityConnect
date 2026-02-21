@@ -15,7 +15,6 @@ class FeedViewModel(
 ) : ViewModel() {
 
     init {
-        // Minimal realtime sync so deletions propagate immediately across devices
         postRepository.startPostsRealtimeSync()
     }
 
@@ -23,8 +22,6 @@ class FeedViewModel(
         postRepository.stopPostsRealtimeSync()
         super.onCleared()
     }
-
-    // Cache uid once for this VM instance (minimal, avoids repeated auth calls / null timing)
     private val uid: String? = authRepository.currentUid()
 
     val currentUserId: String? get() = uid
@@ -33,8 +30,6 @@ class FeedViewModel(
 
     private val _showOnlyMine = MutableLiveData(false)
     val showOnlyMine: LiveData<Boolean> = _showOnlyMine
-
-    // Posts shown in UI (optionally filtered)
     val posts: LiveData<List<Post>> = MediatorLiveData<List<Post>>().apply {
         fun recompute(all: List<Post>?, onlyMine: Boolean?) {
             val list = all ?: emptyList()
@@ -97,8 +92,6 @@ class FeedViewModel(
             callback(result)
         }
     }
-
-    // Keep old signatures
     fun create(text: String, callback: (Result<Unit>) -> Unit) = create(text, null, callback)
 
     fun update(postId: String, newText: String, callback: (Result<Unit>) -> Unit) =

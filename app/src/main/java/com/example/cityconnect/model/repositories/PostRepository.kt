@@ -52,9 +52,7 @@ class PostRepository(
             result.fold(
                 onSuccess = { posts ->
                     ioScope.launch {
-                        // Upsert current snapshot
                         postDao.upsertAll(posts.map { it.toEntity() })
-                        // Propagate deletions: remove anything not in the server snapshot
                         val ids = posts.map { it.id }
                         if (ids.isEmpty()) {
                             postDao.clearAll()
@@ -166,8 +164,6 @@ class PostRepository(
             }
         }
     }
-
-    // Keep old signatures for compatibility (delegate)
     fun createPost(text: String, callback: (Result<Unit>) -> Unit) = createPost(text, null, callback)
 
     fun updatePost(postId: String, newText: String, callback: (Result<Unit>) -> Unit) =

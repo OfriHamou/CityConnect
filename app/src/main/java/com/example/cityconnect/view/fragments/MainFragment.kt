@@ -29,8 +29,6 @@ class MainFragment : Fragment() {
         val navHostFragment = childFragmentManager
             .findFragmentById(binding.mainNavHost.id) as NavHostFragment
         val navController = navHostFragment.navController
-
-        // Minimal + robust: handle selection ourselves
         binding.bottomNavigation.setOnItemSelectedListener { item ->
             val currentId = navController.currentDestination?.id
             if (currentId != item.itemId) {
@@ -38,8 +36,6 @@ class MainFragment : Fragment() {
             }
             true
         }
-
-        // Keep bottom nav checked item in sync
         navController.addOnDestinationChangedListener { _, destination, _ ->
             binding.bottomNavigation.menu.findItem(destination.id)?.isChecked = true
         }

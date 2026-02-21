@@ -67,7 +67,5 @@ class EditProfileViewModel(
             )
         }
     }
-
-    // keep old signature
     fun save(fullName: String) = save(fullName, null)
 }
