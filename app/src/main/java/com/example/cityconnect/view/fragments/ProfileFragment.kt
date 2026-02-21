@@ -56,6 +56,11 @@ class ProfileFragment : Fragment() {
             rootNavController.navigate(R.id.loginFragment, null, options)
         }
 
+        // Minimal: tap posts-count to open My Posts
+        binding.tvPostsCreatedValue.setOnClickListener {
+            rootNavController.navigate(R.id.action_mainFragment_to_myPostsFragment)
+        }
+
         profileViewModel.loading.observe(viewLifecycleOwner) { isLoading ->
             binding.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
         }
