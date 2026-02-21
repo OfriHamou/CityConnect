@@ -1,59 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
-    <LinearLayout
-        android:id="@+id/topBar"
-        android:layout_width="match_parent"
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:background="@drawable/bg_profile_header"
+        android:title="Community"
+        android:titleTextColor="@android:color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_profile_header"
-            android:title="Community"
-            android:titleTextColor="@android:color/white" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chipMyPosts"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:checkable="true"
-            android:text="My posts"
-            android:textColor="#FFFFFF"
-            app:checkedIconVisible="false"
-            app:chipBackgroundColor="#771E62FD" />
-
-    </LinearLayout>
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chipMyPosts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:checkable="true"
+        android:text="My posts"
+        android:textColor="#FFFFFF"
+        app:checkedIconVisible="false"
+        app:chipBackgroundColor="#771E62FD"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvFeed"
-        android:layout_width="match_parent"
-        android:layout_height="576dp"
-        android:layout_gravity="fill"
-        android:layout_marginTop="96dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:clipToPadding="false"
         android:paddingTop="0dp"
         android:paddingBottom="88dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        app:layout_constraintTop_toBottomOf="@id/chipMyPosts"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnNewPost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
         android:contentDescription="@null"
         app:backgroundTint="#1E63FF"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        app:srcCompat="@android:drawable/ic_input_add"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

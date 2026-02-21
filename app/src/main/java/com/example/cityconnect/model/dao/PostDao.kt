@@ -29,4 +29,7 @@ interface PostDao {
 
     @Query("SELECT COUNT(*) FROM posts WHERE ownerId = :ownerId")
     fun observeCountByOwner(ownerId: String): LiveData<Int>
+
+    @Query("UPDATE posts SET ownerName = :ownerName, ownerAvatarUrl = :ownerAvatarUrl WHERE ownerId = :ownerId")
+    suspend fun updateOwnerInfo(ownerId: String, ownerName: String, ownerAvatarUrl: String)
 }

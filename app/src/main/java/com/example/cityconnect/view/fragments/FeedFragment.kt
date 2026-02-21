@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.NavHostFragment
@@ -57,9 +56,9 @@ class FeedFragment : Fragment() {
                     .show()
 
                 dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
-                    ?.setTextColor(ContextCompat.getColor(requireContext(), R.color.dialog_cancel))
+                    ?.setTextColor(resources.getColor(R.color.dialog_cancel, null))
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-                    ?.setTextColor(ContextCompat.getColor(requireContext(), R.color.dialog_delete))
+                    ?.setTextColor(resources.getColor(R.color.dialog_delete, null))
             },
         )
 
@@ -73,7 +72,7 @@ class FeedFragment : Fragment() {
 
         // Navigate to separate My Posts screen
         binding.chipMyPosts.setOnClickListener {
-            rootNavController.navigate(R.id.action_mainFragment_to_myPostsFragment)
+            rootNavController.navigate(R.id.action_global_myPostsFragment)
         }
 
         viewModel.posts.observe(viewLifecycleOwner) { posts ->

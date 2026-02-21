@@ -62,5 +62,40 @@ class PostsRemote(
                 callback(Result.failure(e))
             }
     }
-}
 
+    fun updateOwnerInfoForAllPosts(
+        ownerId: String,
+        ownerName: String,
+        ownerAvatarUrl: String,
+        callback: (Result<Unit>) -> Unit,
+    ) {
+        postsCollection
+            .whereEqualTo("ownerId", ownerId)
+            .get()
+            .addOnSuccessListener { snapshot ->
+                val batch = db.batch()
+                snapshot.documents.forEach { doc ->
+                    batch.update(
+                        doc.reference,
+                        mapOf(
+                            "ownerName" to ownerName,
+                            "ownerAvatarUrl" to ownerAvatarUrl,
+                            // don't touch text/imageUrl/createdAt
+                            "updatedAt" to System.currentTimeMillis(),
+                        ),
+                    )
+                }
+
+                batch.commit()
+                    .addOnSuccessListener { callback(Result.success(Unit)) }
+                    .addOnFailureListener { e ->
+                        Log.e("PostsRemote", "updateOwnerInfoForAllPosts commit failed", e)
+                        callback(Result.failure(e))
+                    }
+            }
+            .addOnFailureListener { e ->
+                Log.e("PostsRemote", "updateOwnerInfoForAllPosts query failed", e)
+                callback(Result.failure(e))
+            }
+    }
+}

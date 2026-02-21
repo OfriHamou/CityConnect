@@ -20,6 +20,7 @@ class UserRepository(
     private val remote: UsersRemote = UsersRemote(),
     private val imagesRemote: ImagesRemote = ImagesRemote(),
     private val userDao: UserDao = AppDatabase.getInstance(MyApplication.appContext()).userDao(),
+    private val postRepository: PostRepository = PostRepository(),
 ) {
 
     private val ioScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -84,7 +85,12 @@ class UserRepository(
                 uploadResult.fold(
                     onSuccess = { url ->
                         remote.updateUser(uid, fullName, url) { updateResult ->
-                            updateResult.onSuccess { getUser(uid) { /* ignore */ } }
+                            updateResult.onSuccess {
+                                // Refresh local user cache
+                                getUser(uid) { /* ignore */ }
+                                // Fan-out user changes into existing posts
+                                postRepository.updateOwnerInfoForAllPosts(uid, fullName, url) { /* ignore */ }
+                            }
                             callback(updateResult)
                         }
                     },
@@ -95,7 +101,10 @@ class UserRepository(
             ioScope.launch {
                 val existingAvatarUrl = userDao.getUserOnce(uid)?.avatarUrl.orEmpty()
                 remote.updateUser(uid, fullName, existingAvatarUrl) { result ->
-                    result.onSuccess { getUser(uid) { /* ignore */ } }
+                    result.onSuccess {
+                        getUser(uid) { /* ignore */ }
+                        postRepository.updateOwnerInfoForAllPosts(uid, fullName, existingAvatarUrl) { /* ignore */ }
+                    }
                     callback(result)
                 }
             }
