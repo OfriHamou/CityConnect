@@ -74,10 +74,14 @@ class FeedAdapter(
             }
 
             val isOwner = !currentUserId.isNullOrBlank() && post.ownerId == currentUserId
-            binding.btnEdit.visibility = if (isOwner) View.VISIBLE else View.GONE
+            binding.tvEdit.visibility = if (isOwner) View.VISIBLE else View.GONE
+            binding.tvDelete.visibility = if (isOwner) View.VISIBLE else View.GONE
 
-            // Tap three-dots to edit (owner only)
-            binding.btnEdit.setOnClickListener { if (isOwner) onEdit(post) }
+            // Tap edit (owner only)
+            binding.tvEdit.setOnClickListener { if (isOwner) onEdit(post) }
+
+            // Tap delete (owner only)
+            binding.tvDelete.setOnClickListener { if (isOwner) onDelete(post) }
 
             // Simple delete gesture (owner only): long-press the card
             binding.root.setOnLongClickListener {

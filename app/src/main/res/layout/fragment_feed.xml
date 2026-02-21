@@ -26,22 +26,24 @@
             android:layout_marginStart="12dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:text="My posts"
             android:checkable="true"
-            app:checkedIconVisible="false" />
+            android:text="My posts"
+            android:textColor="#FFFFFF"
+            app:checkedIconVisible="false"
+            app:chipBackgroundColor="#771E62FD" />
 
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvFeed"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="576dp"
         android:layout_gravity="fill"
+        android:layout_marginTop="96dp"
         android:clipToPadding="false"
         android:paddingTop="0dp"
         android:paddingBottom="88dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:layout_marginTop="96dp" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnNewPost"

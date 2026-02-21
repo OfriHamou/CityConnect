@@ -37,7 +37,7 @@
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@id/ivAvatar"
-            app:layout_constraintEnd_toStartOf="@id/btnEdit"
+            app:layout_constraintEnd_toStartOf="@id/tvDelete"
             app:layout_constraintTop_toTopOf="@id/ivAvatar" />
 
         <TextView
@@ -50,19 +50,37 @@
             android:textSize="12sp"
             android:textColor="#777777"
             app:layout_constraintStart_toEndOf="@id/ivAvatar"
-            app:layout_constraintEnd_toStartOf="@id/btnEdit"
+            app:layout_constraintEnd_toStartOf="@id/tvDelete"
             app:layout_constraintTop_toBottomOf="@id/tvOwner" />
 
-        <ImageButton
-            android:id="@+id/btnEdit"
-            android:layout_width="36dp"
+        <TextView
+            android:id="@+id/tvEdit"
+            android:layout_width="wrap_content"
             android:layout_height="36dp"
-            android:background="@android:color/transparent"
-            android:contentDescription="@null"
-            android:src="@drawable/ic_more_vert_24"
-            app:tint="#777777"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="10dp"
+            android:text="Edit"
+            android:textColor="#777777"
+            android:textSize="13sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvDelete"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:gravity="center_vertical"
+            android:paddingEnd="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:text="Delete"
+            android:textColor="#D32F2F"
+            android:textSize="13sp"
+            app:layout_constraintEnd_toStartOf="@id/tvEdit"
+            app:layout_constraintTop_toTopOf="@id/tvEdit"
+            app:layout_constraintBottom_toBottomOf="@id/tvEdit" />
 
         <!-- Hidden action used by code (kept for compatibility) -->
         <Button
@@ -72,7 +90,7 @@
             android:visibility="gone"
             android:text="Del"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnEdit" />
+            app:layout_constraintTop_toBottomOf="@id/tvEdit" />
 
         <TextView
             android:id="@+id/tvText"

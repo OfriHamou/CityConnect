@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.NavHostFragment
@@ -45,7 +47,19 @@ class FeedFragment : Fragment() {
                 rootNavController.navigate(action)
             },
             onDelete = { post ->
-                viewModel.delete(post.id) { /* state handled via error LiveData */ }
+                val dialog = AlertDialog.Builder(requireContext())
+                    .setTitle("Delete post?")
+                    .setMessage("This can't be undone.")
+                    .setNegativeButton("Cancel", null)
+                    .setPositiveButton("Delete") { _, _ ->
+                        viewModel.delete(post.id) { /* state handled via error LiveData */ }
+                    }
+                    .show()
+
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+                    ?.setTextColor(ContextCompat.getColor(requireContext(), R.color.dialog_cancel))
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                    ?.setTextColor(ContextCompat.getColor(requireContext(), R.color.dialog_delete))
             },
         )
 
@@ -57,7 +71,7 @@ class FeedFragment : Fragment() {
             rootNavController.navigate(action)
         }
 
-        // Navigate to separate My Posts screen (instead of filtering inside Feed)
+        // Navigate to separate My Posts screen
         binding.chipMyPosts.setOnClickListener {
             rootNavController.navigate(R.id.action_mainFragment_to_myPostsFragment)
         }
