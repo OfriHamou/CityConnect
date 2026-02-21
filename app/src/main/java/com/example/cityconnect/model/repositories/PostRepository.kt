@@ -12,6 +12,7 @@ import com.example.cityconnect.model.mappers.toEntity
 import com.example.cityconnect.model.remote.firestore.PostsRemote
 import com.example.cityconnect.model.remote.storage.ImagesRemote
 import com.example.cityconnect.model.schemas.Post
+import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -27,6 +28,8 @@ class PostRepository(
 ) {
 
     private val ioScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+    private var postsListener: ListenerRegistration? = null
 
     fun observePosts(): LiveData<List<Post>> {
         val out = MediatorLiveData<List<Post>>()
@@ -49,7 +52,15 @@ class PostRepository(
             result.fold(
                 onSuccess = { posts ->
                     ioScope.launch {
+                        // Upsert current snapshot
                         postDao.upsertAll(posts.map { it.toEntity() })
+                        // Propagate deletions: remove anything not in the server snapshot
+                        val ids = posts.map { it.id }
+                        if (ids.isEmpty()) {
+                            postDao.clearAll()
+                        } else {
+                            postDao.deleteAllNotIn(ids)
+                        }
                     }
                     callback(Result.success(Unit))
                 },
@@ -212,5 +223,29 @@ class PostRepository(
             }
             callback(result)
         }
+    }
+
+    fun startPostsRealtimeSync() {
+        if (postsListener != null) return
+
+        postsListener = remote.observeAllPosts { result ->
+            result.onSuccess { posts ->
+                ioScope.launch {
+                    postDao.upsertAll(posts.map { it.toEntity() })
+
+                    val ids = posts.map { it.id }
+                    if (ids.isEmpty()) {
+                        postDao.clearAll()
+                    } else {
+                        postDao.deleteAllNotIn(ids)
+                    }
+                }
+            }
+        }
+    }
+
+    fun stopPostsRealtimeSync() {
+        postsListener?.remove()
+        postsListener = null
     }
 }

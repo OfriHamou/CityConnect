@@ -32,4 +32,10 @@ interface PostDao {
 
     @Query("UPDATE posts SET ownerName = :ownerName, ownerAvatarUrl = :ownerAvatarUrl WHERE ownerId = :ownerId")
     suspend fun updateOwnerInfo(ownerId: String, ownerName: String, ownerAvatarUrl: String)
+
+    @Query("DELETE FROM posts")
+    suspend fun clearAll()
+
+    @Query("DELETE FROM posts WHERE id NOT IN (:ids)")
+    suspend fun deleteAllNotIn(ids: List<String>)
 }

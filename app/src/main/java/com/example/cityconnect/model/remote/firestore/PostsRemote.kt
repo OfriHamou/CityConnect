@@ -3,6 +3,7 @@ package com.example.cityconnect.model.remote.firestore
 import android.util.Log
 import com.example.cityconnect.model.schemas.Post
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 
 class PostsRemote(
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance(),
@@ -96,6 +97,25 @@ class PostsRemote(
             .addOnFailureListener { e ->
                 Log.e("PostsRemote", "updateOwnerInfoForAllPosts query failed", e)
                 callback(Result.failure(e))
+            }
+    }
+
+    fun observeAllPosts(callback: (Result<List<Post>>) -> Unit): ListenerRegistration {
+        return postsCollection
+            .orderBy("createdAt")
+            .addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    Log.e("PostsRemote", "observeAllPosts failed", e)
+                    callback(Result.failure(e))
+                    return@addSnapshotListener
+                }
+
+                val posts = snapshot?.documents
+                    ?.mapNotNull { it.toObject(Post::class.java) }
+                    ?.sortedByDescending { it.createdAt }
+                    ?: emptyList()
+
+                callback(Result.success(posts))
             }
     }
 }

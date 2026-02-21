@@ -14,6 +14,16 @@ class FeedViewModel(
     private val authRepository: AuthRepository = AuthRepository(),
 ) : ViewModel() {
 
+    init {
+        // Minimal realtime sync so deletions propagate immediately across devices
+        postRepository.startPostsRealtimeSync()
+    }
+
+    override fun onCleared() {
+        postRepository.stopPostsRealtimeSync()
+        super.onCleared()
+    }
+
     // Cache uid once for this VM instance (minimal, avoids repeated auth calls / null timing)
     private val uid: String? = authRepository.currentUid()
 
