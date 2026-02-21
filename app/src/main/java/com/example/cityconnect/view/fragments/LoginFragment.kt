@@ -15,8 +15,7 @@ import com.example.cityconnect.viewmodel.AuthViewModel
 
 class LoginFragment : Fragment() {
 
-    private var _binding: FragmentLoginBinding? = null
-    private val binding get() = _binding!!
+    private var binding: FragmentLoginBinding? = null
 
     private val authViewModel: AuthViewModel by viewModels()
 
@@ -25,12 +24,14 @@ class LoginFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentLoginBinding.inflate(inflater, container, false)
-        return binding.root
+        binding = FragmentLoginBinding.inflate(inflater, container, false)
+        return requireNotNull(binding).root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val binding = requireNotNull(binding)
 
         binding.btnLogin.setOnClickListener {
             val email = binding.etEmail.text?.toString()?.trim().orEmpty()
@@ -71,7 +72,7 @@ class LoginFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        binding = null
         super.onDestroyView()
-        _binding = null
     }
 }

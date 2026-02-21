@@ -19,8 +19,7 @@ import com.example.cityconnect.viewmodel.FeedViewModel
 
 class MyPostsFragment : Fragment() {
 
-    private var _binding: FragmentMyPostsBinding? = null
-    private val binding get() = _binding!!
+    private var binding: FragmentMyPostsBinding? = null
 
     private val viewModel: FeedViewModel by viewModels()
     private var adapter: FeedAdapter? = null
@@ -30,12 +29,14 @@ class MyPostsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = FragmentMyPostsBinding.inflate(inflater, container, false)
-        return binding.root as View
+        binding = FragmentMyPostsBinding.inflate(inflater, container, false)
+        return requireNotNull(binding).root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val binding = requireNotNull(binding)
 
         // Minimal: allow returning to all posts
         binding.toolbar.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material)
@@ -92,9 +93,10 @@ class MyPostsFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
-        binding.rvMyPosts.adapter = null
+        // Avoid touching viewBinding after this point.
+        binding?.rvMyPosts?.adapter = null
         adapter = null
-        _binding = null
+        binding = null
+        super.onDestroyView()
     }
 }

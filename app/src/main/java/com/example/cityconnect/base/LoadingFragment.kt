@@ -9,20 +9,19 @@ import com.example.cityconnect.databinding.FragmentLoadingBinding
 
 class LoadingFragment : Fragment() {
 
-    private var _binding: FragmentLoadingBinding? = null
-    private val binding get() = _binding!!
+    private var binding: FragmentLoadingBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentLoadingBinding.inflate(inflater, container, false)
-        return binding.root
+        binding = FragmentLoadingBinding.inflate(inflater, container, false)
+        return requireNotNull(binding).root
     }
 
     override fun onDestroyView() {
+        binding = null
         super.onDestroyView()
-        _binding = null
     }
 }
