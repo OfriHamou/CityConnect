@@ -14,8 +14,7 @@ import com.example.cityconnect.viewmodel.SplashViewModel
 
 class SplashFragment : Fragment() {
 
-    private var _binding: FragmentSplashBinding? = null
-    private val binding get() = _binding!!
+    private var binding: FragmentSplashBinding? = null
 
     private val viewModel: SplashViewModel by viewModels()
 
@@ -24,8 +23,8 @@ class SplashFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentSplashBinding.inflate(inflater, container, false)
-        return binding.root
+        binding = FragmentSplashBinding.inflate(inflater, container, false)
+        return requireNotNull(binding).root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -47,7 +46,7 @@ class SplashFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        binding = null
         super.onDestroyView()
-        _binding = null
     }
 }

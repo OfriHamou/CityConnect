@@ -16,8 +16,7 @@ import com.example.cityconnect.viewmodel.FeedViewModel
 
 class PostEditorFragment : Fragment() {
 
-    private var _binding: FragmentPostEditorBinding? = null
-    private val binding get() = _binding!!
+    private var binding: FragmentPostEditorBinding? = null
 
     private val args: PostEditorFragmentArgs by navArgs()
     private val viewModel: FeedViewModel by viewModels()
@@ -26,12 +25,15 @@ class PostEditorFragment : Fragment() {
 
     private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         selectedImageUri = uri
-        if (uri != null) {
-            binding.ivPreview.visibility = View.VISIBLE
-            binding.ivPreview.setImageURI(uri)
-        } else {
-            binding.ivPreview.visibility = View.GONE
-            binding.ivPreview.setImageDrawable(null)
+        val binding = binding
+        if (binding != null) {
+            if (uri != null) {
+                binding.ivPreview.visibility = View.VISIBLE
+                binding.ivPreview.setImageURI(uri)
+            } else {
+                binding.ivPreview.visibility = View.GONE
+                binding.ivPreview.setImageDrawable(null)
+            }
         }
     }
 
@@ -40,13 +42,14 @@ class PostEditorFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentPostEditorBinding.inflate(inflater, container, false)
-        return binding.root
+        binding = FragmentPostEditorBinding.inflate(inflater, container, false)
+        return requireNotNull(binding).root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val binding = requireNotNull(binding)
         val postId = args.postId
 
         binding.btnPickImage.setOnClickListener {
@@ -92,7 +95,7 @@ class PostEditorFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        binding = null
         super.onDestroyView()
-        _binding = null
     }
 }

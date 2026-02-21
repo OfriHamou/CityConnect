@@ -15,8 +15,7 @@ import com.example.cityconnect.viewmodel.AuthViewModel
 
 class RegisterFragment : Fragment() {
 
-    private var _binding: FragmentRegisterBinding? = null
-    private val binding get() = _binding!!
+    private var binding: FragmentRegisterBinding? = null
 
     private val authViewModel: AuthViewModel by viewModels()
 
@@ -25,12 +24,14 @@ class RegisterFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentRegisterBinding.inflate(inflater, container, false)
-        return binding.root
+        binding = FragmentRegisterBinding.inflate(inflater, container, false)
+        return requireNotNull(binding).root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val binding = requireNotNull(binding)
 
         binding.btnRegister.setOnClickListener {
             val email = binding.etEmail.text?.toString()?.trim().orEmpty()
@@ -72,7 +73,7 @@ class RegisterFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        binding = null
         super.onDestroyView()
-        _binding = null
     }
 }

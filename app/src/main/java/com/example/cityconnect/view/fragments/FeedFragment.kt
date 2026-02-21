@@ -17,8 +17,7 @@ import com.example.cityconnect.viewmodel.FeedViewModel
 
 class FeedFragment : Fragment() {
 
-    private var _binding: FragmentFeedBinding? = null
-    private val binding get() = _binding!!
+    private var binding: FragmentFeedBinding? = null
 
     private val viewModel: FeedViewModel by viewModels()
     private var adapter: FeedAdapter? = null
@@ -28,12 +27,14 @@ class FeedFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentFeedBinding.inflate(inflater, container, false)
-        return binding.root
+        binding = FragmentFeedBinding.inflate(inflater, container, false)
+        return requireNotNull(binding).root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val binding = requireNotNull(binding)
 
         val rootNavController =
             (requireActivity().supportFragmentManager.findFragmentById(R.id.rootNavHost) as NavHostFragment)
@@ -91,9 +92,10 @@ class FeedFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
-        binding.rvFeed.adapter = null
+        // Avoid touching viewBinding after this point.
+        binding?.rvFeed?.adapter = null
         adapter = null
-        _binding = null
+        binding = null
+        super.onDestroyView()
     }
 }
