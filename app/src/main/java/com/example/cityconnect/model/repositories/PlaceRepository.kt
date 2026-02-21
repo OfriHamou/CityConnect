@@ -30,6 +30,10 @@ class PlaceRepository(
     }
 
     fun refreshPlaces(categoryLabel: String, callback: (Result<Unit>) -> Unit) {
+        if (BuildConfig.GEOAPIFY_API_KEY.isBlank()) {
+            callback(Result.failure(IllegalStateException("Missing GEOAPIFY_API_KEY")))
+            return
+        }
         val categories = when (categoryLabel) {
             "Restaurants" -> "catering.restaurant"
             "Businesses" -> "commercial"
