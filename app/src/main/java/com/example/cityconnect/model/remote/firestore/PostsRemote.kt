@@ -81,7 +81,6 @@ class PostsRemote(
                         mapOf(
                             "ownerName" to ownerName,
                             "ownerAvatarUrl" to ownerAvatarUrl,
-                            // don't touch text/imageUrl/createdAt
                             "updatedAt" to System.currentTimeMillis(),
                         ),
                     )

@@ -62,7 +62,6 @@ class UsersRemote(
         val updates = mapOf(
             "fullName" to fullName,
             "avatarUrl" to avatarUrl,
-            // do NOT update createdAt
             "updatedAt" to System.currentTimeMillis(),
         )
 

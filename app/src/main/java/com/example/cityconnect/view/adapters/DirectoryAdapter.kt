@@ -41,8 +41,6 @@ class DirectoryAdapter : ListAdapter<Place, DirectoryAdapter.PlaceVH>(Diff) {
                 "Services" -> R.drawable.services
                 else -> R.drawable.restaurant
             }
-
-            // Requested: system icon while loading
             val loadingRes = android.R.drawable.ic_menu_gallery
 
             val targetHeightPx = TypedValue.applyDimension(
@@ -59,7 +57,6 @@ class DirectoryAdapter : ListAdapter<Place, DirectoryAdapter.PlaceVH>(Diff) {
             val request = if (!place.imageUrl.isNullOrBlank()) {
                 Picasso.get().load(place.imageUrl)
             } else {
-                // Show category images (restaurants/business/services) but decoded safely.
                 Picasso.get().load(categoryRes)
             }
 

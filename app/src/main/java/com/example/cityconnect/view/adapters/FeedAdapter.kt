@@ -48,8 +48,6 @@ class FeedAdapter(
             binding.tvOwner.text = post.ownerName
             binding.tvDate.text = timeAgo(post.createdAt)
             binding.tvText.text = post.text
-
-            // Avatar
             val ownerAvatarUrl = post.ownerAvatarUrl
             if (ownerAvatarUrl.isNotBlank()) {
                 Picasso.get()
@@ -62,8 +60,6 @@ class FeedAdapter(
             } else {
                 binding.ivAvatar.setImageResource(com.example.cityconnect.R.drawable.ic_launcher_foreground)
             }
-
-            // Post image
             val imageUrl = post.imageUrl
             if (!imageUrl.isNullOrBlank()) {
                 binding.ivPostImage.visibility = View.VISIBLE
@@ -76,14 +72,8 @@ class FeedAdapter(
             val isOwner = !currentUserId.isNullOrBlank() && post.ownerId == currentUserId
             binding.tvEdit.visibility = if (isOwner) View.VISIBLE else View.GONE
             binding.tvDelete.visibility = if (isOwner) View.VISIBLE else View.GONE
-
-            // Tap edit (owner only)
             binding.tvEdit.setOnClickListener { if (isOwner) onEdit(post) }
-
-            // Tap delete (owner only)
             binding.tvDelete.setOnClickListener { if (isOwner) onDelete(post) }
-
-            // Simple delete gesture (owner only): long-press the card
             binding.root.setOnLongClickListener {
                 if (isOwner) {
                     onDelete(post)

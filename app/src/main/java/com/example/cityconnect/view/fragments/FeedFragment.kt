@@ -70,8 +70,6 @@ class FeedFragment : Fragment() {
             val action = MainFragmentDirections.actionMainFragmentToPostEditorFragment(null)
             rootNavController.navigate(action)
         }
-
-        // Navigate to separate My Posts screen
         binding.chipMyPosts.setOnClickListener {
             rootNavController.navigate(R.id.action_global_myPostsFragment)
         }
@@ -92,7 +90,6 @@ class FeedFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        // Avoid touching viewBinding after this point.
         binding?.rvFeed?.adapter = null
         adapter = null
         binding = null

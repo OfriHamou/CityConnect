@@ -26,12 +26,8 @@ class ProfileViewModel(
 
     private val userMediator = MediatorLiveData<User?>()
     val user: LiveData<User?> = userMediator
-
-    // New: total posts for this user (from local cache)
     private val postsCountMediator = MediatorLiveData<Int>()
     val totalPosts: LiveData<Int> = postsCountMediator
-
-    // New: simple formatted date
     private val memberSinceMediator = MediatorLiveData<String>()
     val memberSince: LiveData<String> = memberSinceMediator
 
@@ -72,8 +68,6 @@ class ProfileViewModel(
                 postsCountMediator.value = count
             }
         }
-
-        // Remote refresh -> repositories will cache into Room
         _loading.value = true
         _error.value = null
 
@@ -83,8 +77,6 @@ class ProfileViewModel(
                 _error.postValue(e.message ?: "Failed to refresh profile")
             }
         }
-
-        // This ensures post count can become accurate after a refresh.
         postRepository.refreshPosts { /* ignore */ }
     }
 

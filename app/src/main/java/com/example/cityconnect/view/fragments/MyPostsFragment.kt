@@ -37,8 +37,6 @@ class MyPostsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val binding = requireNotNull(binding)
-
-        // Minimal: allow returning to all posts
         binding.toolbar.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material)
         binding.toolbar.setNavigationOnClickListener {
             findNavController().popBackStack()
@@ -75,8 +73,6 @@ class MyPostsFragment : Fragment() {
 
         binding.rvMyPosts.layoutManager = LinearLayoutManager(requireContext())
         binding.rvMyPosts.adapter = adapter
-
-        // Always show only my posts on this screen
         viewModel.setShowOnlyMine(true)
 
         viewModel.posts.observe(viewLifecycleOwner) { posts ->
@@ -93,7 +89,6 @@ class MyPostsFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        // Avoid touching viewBinding after this point.
         binding?.rvMyPosts?.adapter = null
         adapter = null
         binding = null

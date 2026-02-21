@@ -51,8 +51,6 @@ class DirectoryFragment : Fragment() {
         adapter = DirectoryAdapter()
         binding.rvPlaces.layoutManager = LinearLayoutManager(requireContext())
         binding.rvPlaces.adapter = adapter
-
-        // Initial selected state
         updateChipColors(binding.btnRestaurants)
 
         binding.btnRestaurants.setOnClickListener {
@@ -80,8 +78,6 @@ class DirectoryFragment : Fragment() {
                 Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
             }
         }
-
-        // initial load
         viewModel.refresh()
     }
 

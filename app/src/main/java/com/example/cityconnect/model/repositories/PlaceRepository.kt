@@ -8,7 +8,6 @@ import com.example.cityconnect.model.dao.PlaceDao
 import com.example.cityconnect.model.local.AppDatabase
 import com.example.cityconnect.model.mappers.toDomain
 import com.example.cityconnect.model.mappers.toEntity
-import com.example.cityconnect.model.mappers.toDomain as featureToDomain
 import com.example.cityconnect.model.remote.retrofit.RetrofitClient
 import com.example.cityconnect.model.schemas.Place
 import kotlinx.coroutines.CoroutineScope
@@ -51,7 +50,8 @@ class PlaceRepository(
                     apiKey = apiKey,
                 )
 
-                val places = response.features.map { feature -> feature.featureToDomain(categoryLabel) }
+                val places = response.features
+                    .map { feature -> feature.toDomain(categoryLabel) }
                     .filter { it.id.isNotBlank() }
 
                 placeDao.replaceCategory(categoryLabel, places.map { it.toEntity() })
@@ -62,4 +62,3 @@ class PlaceRepository(
         }
     }
 }
-
